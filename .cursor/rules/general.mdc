@@ -1,0 +1,9 @@
+---
+description: 
+globs: 
+alwaysApply: true
+---
+
+- use `yarn`
+- this is a library will be used with NextJs Projects
+- use `type` instead of `interface`

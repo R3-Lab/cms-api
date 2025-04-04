@@ -1,0 +1,123 @@
+import { CMSResponse, IBlogPost, IBlogCategory } from './types';
+
+type FetcherOptions = {
+    websiteId?: string;
+    apiKey?: string;
+}
+
+type RequestOptions = Omit<RequestInit, 'headers'> & {
+    headers?: Record<string, string>;
+}
+
+export class FetcherError extends Error {
+    constructor(
+        message: string = 'An error occurred',
+        public status?: number,
+        public data?: any
+    ) {
+        super(message);
+        this.name = 'FetcherError';
+    }
+}
+
+export class Fetcher {
+    private baseUrl: string;
+    private defaultWebsiteId?: string;
+    private defaultApiKey?: string;
+
+    constructor(options: FetcherOptions = {}) {
+        this.baseUrl = process.env.CMS_API_URL || 'https://cms.r3lab.com';
+        this.defaultWebsiteId = options.websiteId || process.env.CMS_WEBSITE_ID;
+        this.defaultApiKey = options.apiKey || process.env.CMS_API_KEY;
+    }
+
+    private async request<T>(
+        endpoint: string,
+        options: RequestOptions = {}
+    ): Promise<CMSResponse<T>> {
+        if (!this.defaultWebsiteId) {
+            throw new FetcherError('Website ID is required');
+        }
+
+        if (!this.defaultApiKey) {
+            throw new FetcherError('API Key is required');
+        }
+
+        const headers = {
+            'Content-Type': 'application/json',
+            'x-api-key': this.defaultApiKey,
+            ...options.headers,
+        };
+
+        try {
+            const response = await fetch(`${this.baseUrl}${endpoint}`, {
+                ...options,
+                headers,
+            });
+
+            const data = await response.json();
+
+            if (!response.ok) {
+                const errorMessage = data.message || 'An error occurred';
+                throw new FetcherError(
+                    typeof errorMessage === 'string' ? errorMessage : 'An error occurred',
+                    response.status,
+                    data
+                );
+            }
+
+            return data;
+        } catch (error) {
+            if (error instanceof FetcherError) {
+                throw error;
+            }
+            const errorMessage = error instanceof Error ? error.message : 'An error occurred';
+            throw new FetcherError(
+                typeof errorMessage === 'string' ? errorMessage : 'An error occurred'
+            );
+        }
+    }
+
+    async get<T>(endpoint: string, options?: RequestOptions): Promise<CMSResponse<T>> {
+        // Add websiteId to search params for GET requests
+        const url = new URL(`${this.baseUrl}${endpoint}`);
+        url.searchParams.append('websiteId', this.defaultWebsiteId!);
+        
+        return this.request<T>(url.pathname + url.search, { 
+            ...options, 
+            method: 'GET' 
+        });
+    }
+
+    async post<T>(
+        endpoint: string,
+        body: any,
+        options?: RequestOptions
+    ): Promise<CMSResponse<T>> {
+        // Include websiteId in the body for POST requests
+        const requestBody = {
+            ...body,
+            websiteId: this.defaultWebsiteId,
+        };
+        
+        return this.request<T>(endpoint, {
+            ...options,
+            method: 'POST',
+            body: JSON.stringify(requestBody),
+        });
+    }
+    
+    // Helper methods for blog posts
+    async getBlogPosts(options?: RequestOptions): Promise<CMSResponse<IBlogPost[]>> {
+        return this.get<IBlogPost[]>('/api/blog-posts', options);
+    }
+    
+    async getBlogPost(slug: string, options?: RequestOptions): Promise<CMSResponse<IBlogPost>> {
+        return this.get<IBlogPost>(`/api/blog-posts/${slug}`, options);
+    }
+    
+    // Helper method for blog categories
+    async getBlogCategories(options?: RequestOptions): Promise<CMSResponse<IBlogCategory[]>> {
+        return this.get<IBlogCategory[]>('/api/blog-categories', options);
+    }
+} 
