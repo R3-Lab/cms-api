@@ -1,4 +1,4 @@
-import { CMSResponse, IBlogPost, IBlogCategory } from './types';
+import { CMSResponse, IBlogPost, IBlogCategory, ILead } from './types';
 
 type FetcherOptions = {
     websiteId?: string;
@@ -119,5 +119,47 @@ export class Fetcher {
     // Helper method for blog categories
     async getBlogCategories(options?: RequestOptions): Promise<CMSResponse<IBlogCategory[]>> {
         return this.get<IBlogCategory[]>('/api/blog-categories', options);
+    }
+    
+    // Helper method for leads
+    async createLead(leadData: Omit<ILead, 'websiteId'>, options?: RequestOptions): Promise<void> {
+        try {
+            // For lead creation, we don't expect a standard CMSResponse format
+            // Instead, we'll handle the response directly
+            const response = await fetch(`${this.baseUrl}/api/leads`, {
+                method: 'POST',
+                headers: {
+                    'Content-Type': 'application/json',
+                    'x-api-key': this.defaultApiKey!,
+                    ...options?.headers,
+                },
+                body: JSON.stringify({
+                    ...leadData,
+                    websiteId: this.defaultWebsiteId,
+                }),
+                ...options,
+            });
+
+            // Check if the response is successful (any 2xx status code)
+            if (!response.ok) {
+                // If the response is not successful, handle the error
+                const errorData = await response.json().catch(() => ({}));
+                throw new FetcherError(
+                    errorData.message || 'Failed to create lead',
+                    response.status,
+                    errorData
+                );
+            }
+            
+            // For lead creation, we don't need to return any data
+            return;
+        } catch (error) {
+            if (error instanceof FetcherError) {
+                throw error;
+            }
+            throw new FetcherError(
+                error instanceof Error ? error.message : 'Failed to create lead'
+            );
+        }
     }
 } 

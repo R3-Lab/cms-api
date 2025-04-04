@@ -494,6 +494,39 @@ var Fetcher = class {
       return this.get("/api/blog-categories", options);
     });
   }
+  // Helper method for leads
+  createLead(leadData, options) {
+    return __async(this, null, function* () {
+      try {
+        const response = yield fetch(`${this.baseUrl}/api/leads`, __spreadValues({
+          method: "POST",
+          headers: __spreadValues({
+            "Content-Type": "application/json",
+            "x-api-key": this.defaultApiKey
+          }, options == null ? void 0 : options.headers),
+          body: JSON.stringify(__spreadProps(__spreadValues({}, leadData), {
+            websiteId: this.defaultWebsiteId
+          }))
+        }, options));
+        if (!response.ok) {
+          const errorData = yield response.json().catch(() => ({}));
+          throw new FetcherError(
+            errorData.message || "Failed to create lead",
+            response.status,
+            errorData
+          );
+        }
+        return;
+      } catch (error) {
+        if (error instanceof FetcherError) {
+          throw error;
+        }
+        throw new FetcherError(
+          error instanceof Error ? error.message : "Failed to create lead"
+        );
+      }
+    });
+  }
 };
 
 // src/index.ts
@@ -514,7 +547,13 @@ function getBlogCategories() {
     return fetcher.getBlogCategories();
   });
 }
+function createLead(leadData) {
+  return __async(this, null, function* () {
+    return fetcher.createLead(leadData);
+  });
+}
 export {
+  createLead,
   getBlogCategories,
   getBlogPost,
   getBlogPosts

@@ -1,6 +1,6 @@
 import dotenv from 'dotenv';
-import { getBlogPosts, getBlogPost, getBlogCategories } from '../src/index';
-import { CMSResponse, IBlogPost, IBlogCategory } from '../src/types';
+import { getBlogPosts, getBlogPost, getBlogCategories, createLead } from '../src/index';
+import { CMSResponse, IBlogPost, IBlogCategory, ILead } from '../src/types';
 
 // Load environment variables from .env file
 dotenv.config();
@@ -106,6 +106,52 @@ describe('Exported Functions', () => {
       
       try {
         await getBlogCategories();
+        // If we reach here, the test should fail
+        expect(true).toBe(false);
+      } catch (error) {
+        // We expect an error to be thrown
+        expect(error).toBeDefined();
+      } finally {
+        // Restore the original API key
+        process.env.CMS_API_KEY = originalApiKey;
+      }
+    }, 10000);
+  });
+  
+  describe('createLead', () => {
+    it('should create a lead successfully', async () => {
+      const leadData = {
+        firstName: 'John',
+        lastName: 'Doe',
+        email: 'john.doe@example.com',
+        phone: '+1234567890',
+        company: 'Example Corp',
+        website: 'https://example.com',
+        source: 'API Test',
+        notes: 'Test lead created via API',
+        customData: [
+          { key: 'testKey', value: 'testValue' }
+        ]
+      };
+      
+      // The function should not throw an error
+      await expect(createLead(leadData)).resolves.not.toThrow();
+    }, 10000);
+    
+    it('should handle API errors gracefully', async () => {
+      // Temporarily set an invalid API key to test error handling
+      const originalApiKey = process.env.CMS_API_KEY;
+      process.env.CMS_API_KEY = 'invalid-api-key';
+      
+      const leadData = {
+        firstName: 'John',
+        lastName: 'Doe',
+        email: 'john.doe@example.com',
+        website: 'https://example.com'
+      };
+      
+      try {
+        await createLead(leadData);
         // If we reach here, the test should fail
         expect(true).toBe(false);
       } catch (error) {
