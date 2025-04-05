@@ -405,11 +405,14 @@ var require_main = __commonJS({
 // src/index.ts
 var index_exports = {};
 __export(index_exports, {
+  actionClient: () => actionClient,
   createLead: () => createLead,
   getBlogCategories: () => getBlogCategories,
   getBlogPost: () => getBlogPost,
   getBlogPosts: () => getBlogPosts,
-  leadSchema: () => leadSchema
+  leadSchema: () => leadSchema,
+  rateLimitedActionClient: () => rateLimitedActionClient,
+  simpleActionClient: () => simpleActionClient
 });
 module.exports = __toCommonJS(index_exports);
 var import_dotenv = __toESM(require_main());
@@ -437,13 +440,13 @@ var Fetcher = class {
       if (!this.defaultApiKey) {
         throw new FetcherError("API Key is required");
       }
-      const headers = __spreadValues({
+      const headers2 = __spreadValues({
         "Content-Type": "application/json",
         "x-api-key": this.defaultApiKey
       }, options.headers);
       try {
         const response = yield fetch(`${this.baseUrl}${endpoint}`, __spreadProps(__spreadValues({}, options), {
-          headers
+          headers: headers2
         }));
         const data = yield response.json();
         if (!response.ok) {
@@ -560,6 +563,97 @@ var leadSchema = import_zod.z.object({
   websiteId: import_zod.z.string().min(1, { message: "Website ID is required" })
 });
 
+// src/action/safe-action.ts
+var import_next_safe_action4 = require("next-safe-action");
+
+// src/action/safe-action-helpers.ts
+var import_next_safe_action = require("next-safe-action");
+var import_sonner = require("sonner");
+var VALIDATION_ERROR_MESSAGE = "An error occurred validating your input.";
+
+// src/action/safe-action.ts
+var import_zod2 = require("zod");
+
+// src/action/observability-middleware.ts
+var import_next_safe_action2 = require("next-safe-action");
+var loggingMiddleware = (0, import_next_safe_action2.createMiddleware)().define((_0) => __async(void 0, [_0], function* ({ next, metadata, clientInput }) {
+  const result = yield next({ ctx: void 0 });
+  if (process.env.NODE_ENV === "development") {
+    console.debug({ clientInput }, "Input");
+    console.debug({ result: result.data }, "Result");
+    console.debug({ metadata }, "Metadata");
+  }
+  return result;
+}));
+
+// src/action/ratelimit.middleware.ts
+var import_ratelimit = require("@upstash/ratelimit");
+var import_next_safe_action3 = require("next-safe-action");
+var import_headers = require("next/headers");
+var import_redis = require("@upstash/redis");
+var redisClient = new import_redis.Redis({
+  url: process.env.UPSTASH_REDIS_REST_URL,
+  token: process.env.UPSTASH_REDIS_REST_TOKEN
+});
+var rateLimitingMiddleware = (0, import_next_safe_action3.createMiddleware)().define((_0) => __async(void 0, [_0], function* ({ next, metadata }) {
+  const {
+    limiter = {
+      // Default to 1 requests per 14 hours
+      tokens: 1,
+      window: "14h"
+    },
+    name
+  } = metadata;
+  const channel = "action";
+  const ratelimit = new import_ratelimit.Ratelimit({
+    limiter: import_ratelimit.Ratelimit.fixedWindow(limiter.tokens, limiter.window),
+    redis: redisClient
+  });
+  const ip = (yield (0, import_headers.headers)()).get("x-forwarded-for");
+  const { success, remaining } = yield ratelimit.limit(
+    `${ip}-${channel}-${name}`
+  );
+  if (!success) {
+    throw new Error("Seems like you've already send this form. Please try again later.");
+  }
+  return next({
+    ctx: {
+      ratelimit: {
+        remaining
+      }
+    }
+  });
+}));
+
+// src/action/safe-action.ts
+var durationSchema = import_zod2.z.string().regex(/^\d+\s*[mshd]{1,2}$/, "Invalid duration format").refine((val) => {
+  const [num, unit] = val.split(/\s+/).filter(Boolean);
+  return !isNaN(Number(num)) && ["ms", "s", "m", "h", "d"].includes(unit);
+}, "Duration must be a number followed by a valid unit (ms, s, m, h, d)");
+var simpleActionClient = (0, import_next_safe_action4.createSafeActionClient)();
+var actionClientWithMeta = (0, import_next_safe_action4.createSafeActionClient)({
+  handleServerError(e) {
+    if (e instanceof import_zod2.ZodError) {
+      console.error(e.message);
+      return VALIDATION_ERROR_MESSAGE;
+    } else if (e instanceof Error) {
+      return e.message;
+    }
+    return import_next_safe_action4.DEFAULT_SERVER_ERROR_MESSAGE;
+  },
+  defineMetadataSchema() {
+    return import_zod2.z.object({
+      name: import_zod2.z.string(),
+      limiter: import_zod2.z.object({
+        tokens: import_zod2.z.number(),
+        window: durationSchema
+      }).optional()
+    });
+  }
+});
+var actionClient = actionClientWithMeta.use(loggingMiddleware);
+var rateLimitedActionClient = actionClientWithMeta.use(loggingMiddleware).use(rateLimitingMiddleware);
+
 // src/index.ts
 if (typeof window === "undefined" && !process.env.VERCEL && !process.env.NEXT_PUBLIC_VERCEL_ENV) {
   import_dotenv.default.config();
@@ -587,9 +681,12 @@ function createLead(leadData) {
 }
 // Annotate the CommonJS export names for ESM import in node:
 0 && (module.exports = {
+  actionClient,
   createLead,
   getBlogCategories,
   getBlogPost,
   getBlogPosts,
-  leadSchema
+  leadSchema,
+  rateLimitedActionClient,
+  simpleActionClient
 });

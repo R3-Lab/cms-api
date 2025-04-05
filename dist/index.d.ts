@@ -1,4 +1,6 @@
 import { z } from 'zod';
+import * as next_safe_action from 'next-safe-action';
+import { Duration } from '@upstash/ratelimit';
 
 type IBlogPost = {
     slug: string;
@@ -91,6 +93,83 @@ declare const leadSchema: z.ZodObject<{
 }>;
 type LeadSchemaType = z.infer<typeof leadSchema>;
 
+declare const simpleActionClient: next_safe_action.SafeActionClient<string, undefined, undefined, undefined, {}, undefined, undefined, undefined, readonly [], {
+    formErrors: string[];
+    fieldErrors: {};
+} | undefined, readonly []>;
+declare const actionClient: next_safe_action.SafeActionClient<string, undefined, z.ZodObject<{
+    name: z.ZodString;
+    limiter: z.ZodOptional<z.ZodObject<{
+        tokens: z.ZodNumber;
+        window: z.ZodEffects<z.ZodString, Duration, string>;
+    }, "strip", z.ZodTypeAny, {
+        window: Duration;
+        tokens: number;
+    }, {
+        window: string;
+        tokens: number;
+    }>>;
+}, "strip", z.ZodTypeAny, {
+    name: string;
+    limiter?: {
+        window: Duration;
+        tokens: number;
+    } | undefined;
+}, {
+    name: string;
+    limiter?: {
+        window: string;
+        tokens: number;
+    } | undefined;
+}>, {
+    name: string;
+    limiter?: {
+        window: Duration;
+        tokens: number;
+    } | undefined;
+}, object, undefined, undefined, undefined, readonly [], {
+    formErrors: string[];
+    fieldErrors: {};
+} | undefined, readonly []>;
+declare const rateLimitedActionClient: next_safe_action.SafeActionClient<string, undefined, z.ZodObject<{
+    name: z.ZodString;
+    limiter: z.ZodOptional<z.ZodObject<{
+        tokens: z.ZodNumber;
+        window: z.ZodEffects<z.ZodString, Duration, string>;
+    }, "strip", z.ZodTypeAny, {
+        window: Duration;
+        tokens: number;
+    }, {
+        window: string;
+        tokens: number;
+    }>>;
+}, "strip", z.ZodTypeAny, {
+    name: string;
+    limiter?: {
+        window: Duration;
+        tokens: number;
+    } | undefined;
+}, {
+    name: string;
+    limiter?: {
+        window: string;
+        tokens: number;
+    } | undefined;
+}>, {
+    name: string;
+    limiter?: {
+        window: Duration;
+        tokens: number;
+    } | undefined;
+}, {
+    ratelimit: {
+        remaining: number;
+    };
+}, undefined, undefined, undefined, readonly [], {
+    formErrors: string[];
+    fieldErrors: {};
+} | undefined, readonly []>;
+
 /**
  * Get all blog posts
  * @returns Promise with blog posts data
@@ -114,4 +193,4 @@ declare function getBlogCategories(): Promise<CMSResponse<IBlogCategory[]>>;
  */
 declare function createLead(leadData: Omit<ILead, 'websiteId'>): Promise<void>;
 
-export { type CMSResponse, type IBlogCategory, type IBlogPost, type ICustomData, type ILead, type LeadSchemaType, createLead, getBlogCategories, getBlogPost, getBlogPosts, leadSchema };
+export { type CMSResponse, type IBlogCategory, type IBlogPost, type ICustomData, type ILead, type LeadSchemaType, actionClient, createLead, getBlogCategories, getBlogPost, getBlogPosts, leadSchema, rateLimitedActionClient, simpleActionClient };

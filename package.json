@@ -18,7 +18,11 @@
   "author": "R3Lab",
   "license": "ISC",
   "dependencies": {
+    "@upstash/ratelimit": "^2.0.5",
+    "@upstash/redis": "^1.34.6",
     "next": "^15.2.4",
+    "next-safe-action": "^7.10.4",
+    "sonner": "^2.0.3",
     "zod": "^3.24.2"
   },
   "devDependencies": {

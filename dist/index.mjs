@@ -428,13 +428,13 @@ var Fetcher = class {
       if (!this.defaultApiKey) {
         throw new FetcherError("API Key is required");
       }
-      const headers = __spreadValues({
+      const headers2 = __spreadValues({
         "Content-Type": "application/json",
         "x-api-key": this.defaultApiKey
       }, options.headers);
       try {
         const response = yield fetch(`${this.baseUrl}${endpoint}`, __spreadProps(__spreadValues({}, options), {
-          headers
+          headers: headers2
         }));
         const data = yield response.json();
         if (!response.ok) {
@@ -551,6 +551,97 @@ var leadSchema = z.object({
   websiteId: z.string().min(1, { message: "Website ID is required" })
 });
 
+// src/action/safe-action.ts
+import { createSafeActionClient, DEFAULT_SERVER_ERROR_MESSAGE as DEFAULT_SERVER_ERROR_MESSAGE2 } from "next-safe-action";
+
+// src/action/safe-action-helpers.ts
+import { DEFAULT_SERVER_ERROR_MESSAGE } from "next-safe-action";
+import { toast } from "sonner";
+var VALIDATION_ERROR_MESSAGE = "An error occurred validating your input.";
+
+// src/action/safe-action.ts
+import { z as z2, ZodError } from "zod";
+
+// src/action/observability-middleware.ts
+import { createMiddleware } from "next-safe-action";
+var loggingMiddleware = createMiddleware().define((_0) => __async(void 0, [_0], function* ({ next, metadata, clientInput }) {
+  const result = yield next({ ctx: void 0 });
+  if (process.env.NODE_ENV === "development") {
+    console.debug({ clientInput }, "Input");
+    console.debug({ result: result.data }, "Result");
+    console.debug({ metadata }, "Metadata");
+  }
+  return result;
+}));
+
+// src/action/ratelimit.middleware.ts
+import { Ratelimit } from "@upstash/ratelimit";
+import { createMiddleware as createMiddleware2 } from "next-safe-action";
+import { headers } from "next/headers";
+import { Redis } from "@upstash/redis";
+var redisClient = new Redis({
+  url: process.env.UPSTASH_REDIS_REST_URL,
+  token: process.env.UPSTASH_REDIS_REST_TOKEN
+});
+var rateLimitingMiddleware = createMiddleware2().define((_0) => __async(void 0, [_0], function* ({ next, metadata }) {
+  const {
+    limiter = {
+      // Default to 1 requests per 14 hours
+      tokens: 1,
+      window: "14h"
+    },
+    name
+  } = metadata;
+  const channel = "action";
+  const ratelimit = new Ratelimit({
+    limiter: Ratelimit.fixedWindow(limiter.tokens, limiter.window),
+    redis: redisClient
+  });
+  const ip = (yield headers()).get("x-forwarded-for");
+  const { success, remaining } = yield ratelimit.limit(
+    `${ip}-${channel}-${name}`
+  );
+  if (!success) {
+    throw new Error("Seems like you've already send this form. Please try again later.");
+  }
+  return next({
+    ctx: {
+      ratelimit: {
+        remaining
+      }
+    }
+  });
+}));
+
+// src/action/safe-action.ts
+var durationSchema = z2.string().regex(/^\d+\s*[mshd]{1,2}$/, "Invalid duration format").refine((val) => {
+  const [num, unit] = val.split(/\s+/).filter(Boolean);
+  return !isNaN(Number(num)) && ["ms", "s", "m", "h", "d"].includes(unit);
+}, "Duration must be a number followed by a valid unit (ms, s, m, h, d)");
+var simpleActionClient = createSafeActionClient();
+var actionClientWithMeta = createSafeActionClient({
+  handleServerError(e) {
+    if (e instanceof ZodError) {
+      console.error(e.message);
+      return VALIDATION_ERROR_MESSAGE;
+    } else if (e instanceof Error) {
+      return e.message;
+    }
+    return DEFAULT_SERVER_ERROR_MESSAGE2;
+  },
+  defineMetadataSchema() {
+    return z2.object({
+      name: z2.string(),
+      limiter: z2.object({
+        tokens: z2.number(),
+        window: durationSchema
+      }).optional()
+    });
+  }
+});
+var actionClient = actionClientWithMeta.use(loggingMiddleware);
+var rateLimitedActionClient = actionClientWithMeta.use(loggingMiddleware).use(rateLimitingMiddleware);
+
 // src/index.ts
 if (typeof window === "undefined" && !process.env.VERCEL && !process.env.NEXT_PUBLIC_VERCEL_ENV) {
   import_dotenv.default.config();
@@ -577,9 +668,12 @@ function createLead(leadData) {
   });
 }
 export {
+  actionClient,
   createLead,
   getBlogCategories,
   getBlogPost,
   getBlogPosts,
-  leadSchema
+  leadSchema,
+  rateLimitedActionClient,
+  simpleActionClient
 };

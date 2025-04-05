@@ -1047,6 +1047,27 @@
   dependencies:
     "@types/yargs-parser" "*"
 
+"@upstash/core-analytics@^0.0.10":
+  version "0.0.10"
+  resolved "https://registry.yarnpkg.com/@upstash/core-analytics/-/core-analytics-0.0.10.tgz#e686a313ec2279d5a8d53e6c215085f1c0f5ab4b"
+  integrity sha512-7qJHGxpQgQr9/vmeS1PktEwvNAF7TI4iJDi8Pu2CFZ9YUGHZH4fOP5TfYlZ4aVxfopnELiE4BS4FBjyK7V1/xQ==
+  dependencies:
+    "@upstash/redis" "^1.28.3"
+
+"@upstash/ratelimit@^2.0.5":
+  version "2.0.5"
+  resolved "https://registry.yarnpkg.com/@upstash/ratelimit/-/ratelimit-2.0.5.tgz#0e8e693b79bdcf5d8643c38bebe8b76e7b79b54a"
+  integrity sha512-1FRv0cs3ZlBjCNOCpCmKYmt9BYGIJf0J0R3pucOPE88R21rL7jNjXG+I+rN/BVOvYJhI9niRAS/JaSNjiSICxA==
+  dependencies:
+    "@upstash/core-analytics" "^0.0.10"
+
+"@upstash/redis@^1.28.3", "@upstash/redis@^1.34.6":
+  version "1.34.6"
+  resolved "https://registry.yarnpkg.com/@upstash/redis/-/redis-1.34.6.tgz#b5e879f7dd17ff2dc123d7dacc1e008066988a15"
+  integrity sha512-/ic+NszsXyIl2P8aExL7xETxgmzyhn6txG4senGDgd524bypGEJs1TMzLDeOV+PFVuacc10wZVJLIj6aRZZNaw==
+  dependencies:
+    crypto-js "^4.2.0"
+
 ansi-escapes@^4.2.1:
   version "4.3.2"
   resolved "https://registry.yarnpkg.com/ansi-escapes/-/ansi-escapes-4.3.2.tgz#6b2291d1db7d98b6521d5f1efa42d0f3a9feb65e"
@@ -1387,6 +1408,11 @@ cross-spawn@^7.0.3, cross-spawn@^7.0.6:
     path-key "^3.1.0"
     shebang-command "^2.0.0"
     which "^2.0.1"
+
+crypto-js@^4.2.0:
+  version "4.2.0"
+  resolved "https://registry.yarnpkg.com/crypto-js/-/crypto-js-4.2.0.tgz#4d931639ecdfd12ff80e8186dba6af2c2e856631"
+  integrity sha512-KALDyEYgpY+Rlob/iriUtjV6d5Eq+Y191A5g4UqLAi8CyGP9N1+FdVbkc1SxKc2r4YAYqG8JzO2KGL+AizD70Q==
 
 debug@^4.1.0, debug@^4.1.1, debug@^4.3.1, debug@^4.4.0:
   version "4.4.0"
@@ -2351,6 +2377,11 @@ natural-compare@^1.4.0:
   resolved "https://registry.yarnpkg.com/natural-compare/-/natural-compare-1.4.0.tgz#4abebfeed7541f2c27acfb29bdbbd15c8d5ba4f7"
   integrity sha512-OWND8ei3VtNC9h7V60qff3SVobHr996CTwgxubgyQYEpg290h9J0buyECNNJexkFm5sOajh5G116RYA1c8ZMSw==
 
+next-safe-action@^7.10.4:
+  version "7.10.4"
+  resolved "https://registry.yarnpkg.com/next-safe-action/-/next-safe-action-7.10.4.tgz#89da1f12e9d9a1934bf598710ecf9ef90304afe5"
+  integrity sha512-rZE89DTNgiTJ8oPQBOZm+jd0Uf/pLkN+GE3PndER6vWqHGYGN7HMLvhpggkbE8W4TGp+qM7CPyrXye1wCjZLVg==
+
 next@^15.2.4:
   version "15.2.4"
   resolved "https://registry.yarnpkg.com/next/-/next-15.2.4.tgz#e05225e9511df98e3b2edc713e17f4c970bff961"
@@ -2701,6 +2732,11 @@ slash@^3.0.0:
   version "3.0.0"
   resolved "https://registry.yarnpkg.com/slash/-/slash-3.0.0.tgz#6539be870c165adbd5240220dbe361f1bc4d4634"
   integrity sha512-g9Q1haeby36OSStwb4ntCGGGaKsaVSjQ68fBxoQcutl5fS1vuY18H3wSt3jFyFtrkx+Kz0V1G85A4MyAdDMi2Q==
+
+sonner@^2.0.3:
+  version "2.0.3"
+  resolved "https://registry.yarnpkg.com/sonner/-/sonner-2.0.3.tgz#de7cdbc4b6a25ac3f0a9e0aed3748e0b3d6e092e"
+  integrity sha512-njQ4Hht92m0sMqqHVDL32V2Oun9W1+PHO9NDv9FHfJjT3JT22IG4Jpo3FPQy+mouRKCXFWO+r67v6MrHX2zeIA==
 
 source-map-js@^1.0.2:
   version "1.2.1"
