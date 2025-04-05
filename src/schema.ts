@@ -32,8 +32,8 @@ export const leadSchema = z.object({
         .optional(),
 
     website: z.string()
-        .min(1, { message: 'Website is required' })
-        .url({ message: 'Please enter a valid URL' }),
+        .url({ message: 'Please enter a valid URL' })
+        .optional(),
 
     source: z.string()
         .max(100, { message: 'Source must be less than 100 characters' })

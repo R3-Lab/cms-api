@@ -556,7 +556,7 @@ var leadSchema = import_zod.z.object({
     { message: "Please enter a valid phone number" }
   ),
   company: import_zod.z.string().max(100, { message: "Company name must be less than 100 characters" }).optional(),
-  website: import_zod.z.string().min(1, { message: "Website is required" }).url({ message: "Please enter a valid URL" }),
+  website: import_zod.z.string().url({ message: "Please enter a valid URL" }).optional(),
   source: import_zod.z.string().max(100, { message: "Source must be less than 100 characters" }).optional(),
   message: import_zod.z.string().max(500, { message: "Message must be less than 500 characters" }).optional(),
   customData: import_zod.z.array(customDataSchema).optional()

@@ -127,11 +127,10 @@ describe('Exported Functions', () => {
         company: 'Example Corp',
         website: 'https://example.com',
         source: 'API Test',
-        notes: 'Test lead created via API',
+        message: 'Test lead created via API',
         customData: [
           { key: 'testKey', value: 'testValue' }
         ],
-        websiteId: process.env.CMS_WEBSITE_ID!
       };
       
       // The function should not throw an error
@@ -148,7 +147,6 @@ describe('Exported Functions', () => {
         lastName: 'Doe',
         email: 'john.doe@example.com',
         website: 'https://example.com',
-        websiteId: process.env.CMS_WEBSITE_ID!
       };
       
       try {
