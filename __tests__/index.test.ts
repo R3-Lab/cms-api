@@ -1,13 +1,19 @@
 import dotenv from 'dotenv';
-import { getBlogPosts, getBlogPost, getBlogCategories, createLead } from '../src/index';
+import { Fetcher } from '../src/fetcher';
 
 // Always load environment variables for tests
 dotenv.config();
 
+const fetcher = new Fetcher({
+  websiteId: process.env.CMS_WEBSITE_ID!,
+  apiKey: process.env.CMS_API_KEY!,
+  baseUrl: process.env.CMS_API_URL!
+});
+
 describe('Exported Functions', () => {
   describe('getBlogPosts', () => {
     it('should fetch blog posts successfully', async () => {
-      const result = await getBlogPosts();
+      const result = await fetcher.getBlogPosts();
       
       // Verify the response structure matches the Postman response
       expect(result).toHaveProperty('data');
@@ -32,7 +38,7 @@ describe('Exported Functions', () => {
       process.env.CMS_API_KEY = 'invalid-api-key';
       
       try {
-        await getBlogPosts();
+        await fetcher.getBlogPosts();
         // If we reach here, the test should fail
         expect(true).toBe(false);
       } catch (error) {
@@ -48,7 +54,7 @@ describe('Exported Functions', () => {
   describe('getBlogPost', () => {
     it('should fetch a blog post by slug successfully', async () => {
       // First get all blog posts to find a valid slug
-      const { data: blogPosts } = await getBlogPosts();
+      const { data: blogPosts } = await fetcher.getBlogPosts();
       
       if (blogPosts.length === 0) {
         console.warn('No blog posts found to test getBlogPost');
@@ -56,7 +62,7 @@ describe('Exported Functions', () => {
       }
       
       const validSlug = blogPosts[0].slug;
-      const result = await getBlogPost(validSlug);
+      const result = await fetcher.getBlogPost(validSlug);
       
       // Verify the response structure for a single blog post
       expect(result).toHaveProperty('data');
@@ -72,7 +78,7 @@ describe('Exported Functions', () => {
     
     it('should handle non-existent blog post gracefully', async () => {
       try {
-        await getBlogPost('non-existent-slug-123456');
+        await fetcher.getBlogPost('non-existent-slug-123456');
         // If we reach here, the test should fail
         expect(true).toBe(false);
       } catch (error) {
@@ -84,7 +90,7 @@ describe('Exported Functions', () => {
   
   describe('getBlogCategories', () => {
     it('should fetch blog categories successfully', async () => {
-      const result = await getBlogCategories();
+      const result = await fetcher.getBlogCategories();
       
       // Verify the response structure
       expect(result).toHaveProperty('data');
@@ -104,7 +110,7 @@ describe('Exported Functions', () => {
       process.env.CMS_API_KEY = 'invalid-api-key';
       
       try {
-        await getBlogCategories();
+        await fetcher.getBlogCategories();
         // If we reach here, the test should fail
         expect(true).toBe(false);
       } catch (error) {
@@ -134,7 +140,7 @@ describe('Exported Functions', () => {
       };
       
       // The function should not throw an error
-      await expect(createLead(leadData)).resolves.not.toThrow();
+      await expect(fetcher.createLead(leadData)).resolves.not.toThrow();
     }, 10000);
     
     it('should handle API errors gracefully', async () => {
@@ -150,7 +156,7 @@ describe('Exported Functions', () => {
       };
       
       try {
-        await createLead(leadData);
+        await fetcher.createLead(leadData);
         // If we reach here, the test should fail
         expect(true).toBe(false);
       } catch (error) {

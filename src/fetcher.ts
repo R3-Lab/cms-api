@@ -4,6 +4,7 @@ import { LeadSchemaType } from './schema';
 type FetcherOptions = {
     websiteId?: string;
     apiKey?: string;
+    baseUrl?: string;
 }
 
 type RequestOptions = Omit<RequestInit, 'headers'> & {
@@ -27,7 +28,7 @@ export class Fetcher {
     private defaultApiKey?: string;
 
     constructor(options: FetcherOptions = {}) {
-        this.baseUrl = process.env.CMS_API_URL || 'https://cms.r3lab.com';
+        this.baseUrl = options.baseUrl || process.env.CMS_API_URL || 'https://cms.r3lab.com';
         this.defaultWebsiteId = options.websiteId || process.env.CMS_WEBSITE_ID;
         this.defaultApiKey = options.apiKey || process.env.CMS_API_KEY;
     }
