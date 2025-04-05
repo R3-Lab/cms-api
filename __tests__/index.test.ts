@@ -1,6 +1,5 @@
 import dotenv from 'dotenv';
 import { getBlogPosts, getBlogPost, getBlogCategories, createLead } from '../src/index';
-import { CMSResponse, IBlogPost, IBlogCategory, ILead } from '../src/types';
 
 // Always load environment variables for tests
 dotenv.config();
@@ -131,7 +130,8 @@ describe('Exported Functions', () => {
         notes: 'Test lead created via API',
         customData: [
           { key: 'testKey', value: 'testValue' }
-        ]
+        ],
+        websiteId: process.env.CMS_WEBSITE_ID!
       };
       
       // The function should not throw an error
@@ -147,7 +147,8 @@ describe('Exported Functions', () => {
         firstName: 'John',
         lastName: 'Doe',
         email: 'john.doe@example.com',
-        website: 'https://example.com'
+        website: 'https://example.com',
+        websiteId: process.env.CMS_WEBSITE_ID!
       };
       
       try {

@@ -51,6 +51,14 @@ export async function getBlogCategories(): Promise<CMSResponse<IBlogCategory[]>>
  * @param leadData - The lead data to create
  * @returns Promise that resolves when the lead is created
  */
-export async function createLead(leadData: Omit<ILead, 'websiteId'>): Promise<void> {
+export async function createLead(leadData: LeadSchemaType): Promise<void> {
     return fetcher.createLead(leadData);
+}
+
+export async function createLeadAction(schema: LeadSchemaType) {
+    return rateLimitedActionClient
+        .schema(leadSchema)
+        .action(async ({ parsedInput }) => {
+            createLead(parsedInput);
+        });
 }

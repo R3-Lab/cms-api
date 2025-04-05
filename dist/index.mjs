@@ -667,9 +667,17 @@ function createLead(leadData) {
     return fetcher.createLead(leadData);
   });
 }
+function createLeadAction(schema) {
+  return __async(this, null, function* () {
+    return rateLimitedActionClient.schema(leadSchema).action((_0) => __async(this, [_0], function* ({ parsedInput }) {
+      createLead(parsedInput);
+    }));
+  });
+}
 export {
   actionClient,
   createLead,
+  createLeadAction,
   getBlogCategories,
   getBlogPost,
   getBlogPosts,

@@ -1,4 +1,5 @@
 import { CMSResponse, IBlogPost, IBlogCategory, ILead } from './types';
+import { LeadSchemaType } from './schema';
 
 type FetcherOptions = {
     websiteId?: string;
@@ -122,7 +123,7 @@ export class Fetcher {
     }
     
     // Helper method for leads
-    async createLead(leadData: Omit<ILead, 'websiteId'>, options?: RequestOptions): Promise<void> {
+    async createLead(leadData: LeadSchemaType, options?: RequestOptions): Promise<void> {
         try {
             // For lead creation, we don't expect a standard CMSResponse format
             // Instead, we'll handle the response directly
