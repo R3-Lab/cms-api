@@ -1,6 +1,7 @@
 import { z } from 'zod';
 import * as next_safe_action from 'next-safe-action';
 import { Duration } from '@upstash/ratelimit';
+import React from 'react';
 
 type IBlogPost = {
     slug: string;
@@ -189,6 +190,11 @@ declare const rateLimitedActionClient: next_safe_action.SafeActionClient<string,
     fieldErrors: {};
 } | undefined, readonly []>;
 
+interface BlogPostContentProps {
+    content: string;
+}
+declare function BlogPostContent({ content }: BlogPostContentProps): React.JSX.Element;
+
 /**
  * Get all blog posts
  * @returns Promise with blog posts data
@@ -212,4 +218,4 @@ declare function getBlogCategories(): Promise<CMSResponse<IBlogCategory[]>>;
  */
 declare function createLead(leadData: LeadSchemaType): Promise<void>;
 
-export { type CMSResponse, Fetcher, type IBlogCategory, type IBlogPost, type ICustomData, type ILead, type LeadSchemaType, actionClient, createLead, getBlogCategories, getBlogPost, getBlogPosts, leadSchema, rateLimitedActionClient, simpleActionClient };
+export { BlogPostContent as BlogPostRenderer, type CMSResponse, Fetcher, type IBlogCategory, type IBlogPost, type ICustomData, type ILead, type LeadSchemaType, actionClient, createLead, getBlogCategories, getBlogPost, getBlogPosts, leadSchema, rateLimitedActionClient, simpleActionClient };

@@ -2,6 +2,7 @@ import { Fetcher } from './fetcher';
 import { CMSResponse, IBlogPost, IBlogCategory, ILead, ICustomData } from './types';
 import { leadSchema, LeadSchemaType } from './schema';
 import { actionClient, rateLimitedActionClient, simpleActionClient } from './action/safe-action';
+import { BlogPostContent } from './blog-post-content';
 
 // Export fetcher
 export { Fetcher };
@@ -14,6 +15,9 @@ export { leadSchema, type LeadSchemaType };
 
 // Export actions
 export { actionClient, rateLimitedActionClient, simpleActionClient };
+
+// Export components
+export { BlogPostContent as BlogPostRenderer };
 
 // Create a singleton fetcher instance
 const fetcher = new Fetcher();
