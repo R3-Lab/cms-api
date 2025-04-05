@@ -87,5 +87,14 @@ declare const leadSchema: z.ZodObject<{
     }[] | undefined;
 }>;
 type LeadSchemaType = z.infer<typeof leadSchema>;
+type BlogPostsQuery = {
+    category?: string;
+    page?: number;
+    limit?: number;
+};
+type RelatedBlogPostsQuery = {
+    category?: string;
+    limit?: number;
+};
 
-export { type CMSResponse, type IBlogCategory, type IBlogPost, type ICustomData, type ILead, type LeadSchemaType, leadSchema };
+export { type BlogPostsQuery, type CMSResponse, type IBlogCategory, type IBlogPost, type ICustomData, type ILead, type LeadSchemaType, type RelatedBlogPostsQuery, leadSchema };

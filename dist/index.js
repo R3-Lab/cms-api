@@ -79,9 +79,14 @@ var Fetcher = class {
       );
     }
   }
-  async get(endpoint, options) {
+  async get(endpoint, params, options) {
     const url = new URL(`${this.baseUrl}${endpoint}`);
     url.searchParams.append("websiteId", this.defaultWebsiteId);
+    if (params) {
+      Object.entries(params).forEach(([key, value]) => {
+        url.searchParams.append(key, value.toString());
+      });
+    }
     return this.request(url.pathname + url.search, {
       ...options,
       method: "GET"
@@ -99,15 +104,20 @@ var Fetcher = class {
     });
   }
   // Helper methods for blog posts
-  async getBlogPosts(options) {
-    return this.get("/api/blog-posts", options);
+  async getBlogPosts(query, options) {
+    return this.get("/api/blog-posts", query, options);
   }
+  // Helper method for blog post by slug
   async getBlogPost(slug, options) {
-    return this.get(`/api/blog-posts/${slug}`, options);
+    return this.get(`/api/blog-posts/${slug}`, {}, options);
   }
   // Helper method for blog categories
   async getBlogCategories(options) {
-    return this.get("/api/blog-categories", options);
+    return this.get("/api/blog-categories", {}, options);
+  }
+  // Helper method for related blog posts
+  async getRelatedBlogPosts(slug, query, options) {
+    return this.get(`/api/blog-posts/${slug}/related`, query, options);
   }
   // Helper method for leads
   async createLead(leadData, options) {

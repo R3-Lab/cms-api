@@ -49,3 +49,14 @@ export const leadSchema = z.object({
 
 // Type inference from the schema
 export type LeadSchemaType = z.infer<typeof leadSchema>;
+
+export type BlogPostsQuery = {
+    category?: string;
+    page?: number;
+    limit?: number;
+}
+
+export type RelatedBlogPostsQuery = {
+    category?: string;
+    limit?: number;
+}

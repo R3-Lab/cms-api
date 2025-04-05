@@ -13,7 +13,7 @@ const fetcher = new Fetcher({
 describe('Exported Functions', () => {
   describe('getBlogPosts', () => {
     it('should fetch blog posts successfully', async () => {
-      const result = await fetcher.getBlogPosts();
+      const result = await fetcher.getBlogPosts({});
       
       // Verify the response structure matches the Postman response
       expect(result).toHaveProperty('data');
@@ -38,7 +38,7 @@ describe('Exported Functions', () => {
       process.env.CMS_API_KEY = 'invalid-api-key';
       
       try {
-        await fetcher.getBlogPosts();
+        await fetcher.getBlogPosts({});
         // If we reach here, the test should fail
         expect(true).toBe(false);
       } catch (error) {
@@ -54,7 +54,7 @@ describe('Exported Functions', () => {
   describe('getBlogPost', () => {
     it('should fetch a blog post by slug successfully', async () => {
       // First get all blog posts to find a valid slug
-      const { data: blogPosts } = await fetcher.getBlogPosts();
+      const { data: blogPosts } = await fetcher.getBlogPosts({});
       
       if (blogPosts.length === 0) {
         console.warn('No blog posts found to test getBlogPost');
@@ -79,6 +79,45 @@ describe('Exported Functions', () => {
     it('should handle non-existent blog post gracefully', async () => {
       try {
         await fetcher.getBlogPost('non-existent-slug-123456');
+        // If we reach here, the test should fail
+        expect(true).toBe(false);
+      } catch (error) {
+        // We expect an error to be thrown
+        expect(error).toBeDefined();
+      }
+    }, 10000);
+  });
+  
+  describe('getRelatedBlogPosts', () => {
+    it('should fetch related blog posts successfully', async () => {
+      // First get all blog posts to find a valid slug
+      const { data: blogPosts } = await fetcher.getBlogPosts({});
+      
+      if (blogPosts.length === 0) {
+        console.warn('No blog posts found to test getRelatedBlogPosts');
+        return;
+      }
+      
+      const validSlug = blogPosts[0].slug;
+      const result = await fetcher.getRelatedBlogPosts(validSlug, {});
+      
+      // Verify the response structure
+      expect(result).toHaveProperty('data');
+      expect(Array.isArray(result.data)).toBe(true);
+      
+      // If there are related posts, verify their structure
+      if (result.data.length > 0) {
+        const relatedPost = result.data[0];
+        expect(relatedPost).toHaveProperty('title');
+        expect(relatedPost).toHaveProperty('slug');
+        expect(relatedPost).toHaveProperty('featuredImage');
+        // Related posts might not have all the same properties as a full blog post
+      }
+    }, 10000);
+    
+    it('should handle non-existent blog post gracefully', async () => {
+      try {
+        await fetcher.getRelatedBlogPosts('non-existent-slug-123456', {});
         // If we reach here, the test should fail
         expect(true).toBe(false);
       } catch (error) {

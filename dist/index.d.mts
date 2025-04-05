@@ -1,4 +1,4 @@
-import { CMSResponse, IBlogPost, IBlogCategory, LeadSchemaType } from './types/index.mjs';
+import { CMSResponse, BlogPostsQuery, IBlogPost, IBlogCategory, RelatedBlogPostsQuery, LeadSchemaType } from './types/index.mjs';
 import * as next_safe_action from 'next-safe-action';
 import { z } from 'zod';
 import { Duration } from '@upstash/ratelimit';
@@ -17,11 +17,12 @@ declare class Fetcher {
     private defaultApiKey?;
     constructor(options?: FetcherOptions);
     private request;
-    get<T>(endpoint: string, options?: RequestOptions): Promise<CMSResponse<T>>;
+    get<T>(endpoint: string, params?: Record<string, string | number>, options?: RequestOptions): Promise<CMSResponse<T>>;
     post<T>(endpoint: string, body: any, options?: RequestOptions): Promise<CMSResponse<T>>;
-    getBlogPosts(options?: RequestOptions): Promise<CMSResponse<IBlogPost[]>>;
+    getBlogPosts(query?: BlogPostsQuery, options?: RequestOptions): Promise<CMSResponse<IBlogPost[]>>;
     getBlogPost(slug: string, options?: RequestOptions): Promise<CMSResponse<IBlogPost>>;
     getBlogCategories(options?: RequestOptions): Promise<CMSResponse<IBlogCategory[]>>;
+    getRelatedBlogPosts(slug: string, query?: RelatedBlogPostsQuery, options?: RequestOptions): Promise<CMSResponse<IBlogPost[]>>;
     createLead(leadData: LeadSchemaType, options?: RequestOptions): Promise<void>;
 }
 

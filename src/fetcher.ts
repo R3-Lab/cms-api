@@ -1,5 +1,5 @@
 import { CMSResponse, IBlogPost, IBlogCategory, ILead } from './types';
-import { LeadSchemaType } from './schema';
+import { BlogPostsQuery, LeadSchemaType, RelatedBlogPostsQuery } from './schema';
 
 type FetcherOptions = {
     websiteId?: string;
@@ -80,11 +80,17 @@ export class Fetcher {
         }
     }
 
-    async get<T>(endpoint: string, options?: RequestOptions): Promise<CMSResponse<T>> {
+    async get<T>(endpoint: string, params?: Record<string, string | number>, options?: RequestOptions): Promise<CMSResponse<T>> {
         // Add websiteId to search params for GET requests
         const url = new URL(`${this.baseUrl}${endpoint}`);
-        url.searchParams.append('websiteId', this.defaultWebsiteId!);
-        
+        url.searchParams.append('websiteId', this.defaultWebsiteId!);        
+
+        if (params) {
+            Object.entries(params).forEach(([key, value]) => {
+                url.searchParams.append(key, value.toString());
+            });
+        }
+
         return this.request<T>(url.pathname + url.search, { 
             ...options, 
             method: 'GET' 
@@ -110,17 +116,23 @@ export class Fetcher {
     }
     
     // Helper methods for blog posts
-    async getBlogPosts(options?: RequestOptions): Promise<CMSResponse<IBlogPost[]>> {
-        return this.get<IBlogPost[]>('/api/blog-posts', options);
+    async getBlogPosts(query?: BlogPostsQuery, options?: RequestOptions): Promise<CMSResponse<IBlogPost[]>> {
+        return this.get<IBlogPost[]>('/api/blog-posts', query, options);
     }
     
+    // Helper method for blog post by slug
     async getBlogPost(slug: string, options?: RequestOptions): Promise<CMSResponse<IBlogPost>> {
-        return this.get<IBlogPost>(`/api/blog-posts/${slug}`, options);
+        return this.get<IBlogPost>(`/api/blog-posts/${slug}`, {}, options);
     }
     
     // Helper method for blog categories
     async getBlogCategories(options?: RequestOptions): Promise<CMSResponse<IBlogCategory[]>> {
-        return this.get<IBlogCategory[]>('/api/blog-categories', options);
+        return this.get<IBlogCategory[]>('/api/blog-categories', {}, options);
+    }
+
+    // Helper method for related blog posts
+    async getRelatedBlogPosts(slug: string, query?: RelatedBlogPostsQuery, options?: RequestOptions): Promise<CMSResponse<IBlogPost[]>> {
+        return this.get<IBlogPost[]>(`/api/blog-posts/${slug}/related`, query, options);
     }
     
     // Helper method for leads
