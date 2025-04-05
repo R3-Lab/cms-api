@@ -1,5 +1,3 @@
-import * as next_safe_action__ from 'next-safe-action/.';
-import * as zod from 'zod';
 import { z } from 'zod';
 import * as next_safe_action from 'next-safe-action';
 import { Duration } from '@upstash/ratelimit';
@@ -105,29 +103,29 @@ declare const actionClient: next_safe_action.SafeActionClient<string, undefined,
         tokens: z.ZodNumber;
         window: z.ZodEffects<z.ZodString, Duration, string>;
     }, "strip", z.ZodTypeAny, {
-        tokens: number;
         window: Duration;
-    }, {
         tokens: number;
+    }, {
         window: string;
+        tokens: number;
     }>>;
 }, "strip", z.ZodTypeAny, {
     name: string;
     limiter?: {
-        tokens: number;
         window: Duration;
+        tokens: number;
     } | undefined;
 }, {
     name: string;
     limiter?: {
-        tokens: number;
         window: string;
+        tokens: number;
     } | undefined;
 }>, {
     name: string;
     limiter?: {
-        tokens: number;
         window: Duration;
+        tokens: number;
     } | undefined;
 }, object, undefined, undefined, undefined, readonly [], {
     formErrors: string[];
@@ -139,29 +137,29 @@ declare const rateLimitedActionClient: next_safe_action.SafeActionClient<string,
         tokens: z.ZodNumber;
         window: z.ZodEffects<z.ZodString, Duration, string>;
     }, "strip", z.ZodTypeAny, {
-        tokens: number;
         window: Duration;
-    }, {
         tokens: number;
+    }, {
         window: string;
+        tokens: number;
     }>>;
 }, "strip", z.ZodTypeAny, {
     name: string;
     limiter?: {
-        tokens: number;
         window: Duration;
+        tokens: number;
     } | undefined;
 }, {
     name: string;
     limiter?: {
-        tokens: number;
         window: string;
+        tokens: number;
     } | undefined;
 }>, {
     name: string;
     limiter?: {
-        tokens: number;
         window: Duration;
+        tokens: number;
     } | undefined;
 }, {
     ratelimit: {
@@ -194,86 +192,5 @@ declare function getBlogCategories(): Promise<CMSResponse<IBlogCategory[]>>;
  * @returns Promise that resolves when the lead is created
  */
 declare function createLead(leadData: LeadSchemaType): Promise<void>;
-declare function createLeadAction(schema: LeadSchemaType): Promise<next_safe_action__.SafeActionFn<string, zod.ZodObject<{
-    firstName: zod.ZodString;
-    lastName: zod.ZodString;
-    email: zod.ZodString;
-    phone: zod.ZodEffects<zod.ZodOptional<zod.ZodString>, string | undefined, string | undefined>;
-    company: zod.ZodOptional<zod.ZodString>;
-    website: zod.ZodString;
-    source: zod.ZodOptional<zod.ZodString>;
-    notes: zod.ZodOptional<zod.ZodString>;
-    customData: zod.ZodOptional<zod.ZodArray<zod.ZodObject<{
-        key: zod.ZodString;
-        value: zod.ZodString;
-    }, "strip", zod.ZodTypeAny, {
-        value: string;
-        key: string;
-    }, {
-        value: string;
-        key: string;
-    }>, "many">>;
-    websiteId: zod.ZodString;
-}, "strip", zod.ZodTypeAny, {
-    firstName: string;
-    lastName: string;
-    email: string;
-    website: string;
-    websiteId: string;
-    phone?: string | undefined;
-    company?: string | undefined;
-    source?: string | undefined;
-    notes?: string | undefined;
-    customData?: {
-        value: string;
-        key: string;
-    }[] | undefined;
-}, {
-    firstName: string;
-    lastName: string;
-    email: string;
-    website: string;
-    websiteId: string;
-    phone?: string | undefined;
-    company?: string | undefined;
-    source?: string | undefined;
-    notes?: string | undefined;
-    customData?: {
-        value: string;
-        key: string;
-    }[] | undefined;
-}>, readonly [], {
-    _errors?: string[] | undefined;
-    firstName?: {
-        _errors?: string[] | undefined;
-    } | undefined;
-    lastName?: {
-        _errors?: string[] | undefined;
-    } | undefined;
-    email?: {
-        _errors?: string[] | undefined;
-    } | undefined;
-    website?: {
-        _errors?: string[] | undefined;
-    } | undefined;
-    websiteId?: {
-        _errors?: string[] | undefined;
-    } | undefined;
-    phone?: {
-        _errors?: string[] | undefined;
-    } | undefined;
-    company?: {
-        _errors?: string[] | undefined;
-    } | undefined;
-    source?: {
-        _errors?: string[] | undefined;
-    } | undefined;
-    notes?: {
-        _errors?: string[] | undefined;
-    } | undefined;
-    customData?: {
-        _errors?: string[] | undefined;
-    } | undefined;
-}, readonly [], void>>;
 
-export { type CMSResponse, type IBlogCategory, type IBlogPost, type ICustomData, type ILead, type LeadSchemaType, actionClient, createLead, createLeadAction, getBlogCategories, getBlogPost, getBlogPosts, leadSchema, rateLimitedActionClient, simpleActionClient };
+export { type CMSResponse, type IBlogCategory, type IBlogPost, type ICustomData, type ILead, type LeadSchemaType, actionClient, createLead, getBlogCategories, getBlogPost, getBlogPosts, leadSchema, rateLimitedActionClient, simpleActionClient };

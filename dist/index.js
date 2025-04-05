@@ -407,7 +407,6 @@ var index_exports = {};
 __export(index_exports, {
   actionClient: () => actionClient,
   createLead: () => createLead,
-  createLeadAction: () => createLeadAction,
   getBlogCategories: () => getBlogCategories,
   getBlogPost: () => getBlogPost,
   getBlogPosts: () => getBlogPosts,
@@ -680,18 +679,10 @@ function createLead(leadData) {
     return fetcher.createLead(leadData);
   });
 }
-function createLeadAction(schema) {
-  return __async(this, null, function* () {
-    return rateLimitedActionClient.schema(leadSchema).action((_0) => __async(this, [_0], function* ({ parsedInput }) {
-      createLead(parsedInput);
-    }));
-  });
-}
 // Annotate the CommonJS export names for ESM import in node:
 0 && (module.exports = {
   actionClient,
   createLead,
-  createLeadAction,
   getBlogCategories,
   getBlogPost,
   getBlogPosts,

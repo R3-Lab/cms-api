@@ -55,10 +55,10 @@ export async function createLead(leadData: LeadSchemaType): Promise<void> {
     return fetcher.createLead(leadData);
 }
 
-export async function createLeadAction(schema: LeadSchemaType) {
-    return rateLimitedActionClient
-        .schema(leadSchema)
-        .action(async ({ parsedInput }) => {
-            createLead(parsedInput);
-        });
-}
+// export async function createLeadAction(schema: LeadSchemaType) {
+//     return rateLimitedActionClient
+//         .schema(leadSchema)
+//         .action(async ({ parsedInput }) => {
+//             createLead(parsedInput);
+//         });
+// }
