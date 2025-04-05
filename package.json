@@ -18,7 +18,8 @@
   "author": "R3Lab",
   "license": "ISC",
   "dependencies": {
-    "next": "^15.2.4"
+    "next": "^15.2.4",
+    "zod": "^3.24.2"
   },
   "devDependencies": {
     "@types/jest": "^29.5.14",

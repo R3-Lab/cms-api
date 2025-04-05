@@ -2,7 +2,7 @@ import dotenv from 'dotenv';
 import { getBlogPosts, getBlogPost, getBlogCategories, createLead } from '../src/index';
 import { CMSResponse, IBlogPost, IBlogCategory, ILead } from '../src/types';
 
-// Load environment variables from .env file
+// Always load environment variables for tests
 dotenv.config();
 
 describe('Exported Functions', () => {

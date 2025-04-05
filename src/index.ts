@@ -2,8 +2,10 @@ import dotenv from 'dotenv';
 import { Fetcher } from './fetcher';
 import { CMSResponse, IBlogPost, IBlogCategory, ILead, ICustomData } from './types';
 
-// Load environment variables from .env file
-dotenv.config();
+// Load environment variables from .env file only if not in Next.js or Vercel environment
+if (typeof window === 'undefined' && !process.env.VERCEL && !process.env.NEXT_PUBLIC_VERCEL_ENV) {
+    dotenv.config();
+}
 
 // Export types
 export type { CMSResponse, IBlogPost, IBlogCategory, ILead, ICustomData };
