@@ -61,13 +61,11 @@ declare const leadSchema: z.ZodObject<{
         value: string;
         key: string;
     }>, "many">>;
-    websiteId: z.ZodString;
 }, "strip", z.ZodTypeAny, {
     firstName: string;
     lastName: string;
     email: string;
     website: string;
-    websiteId: string;
     phone?: string | undefined;
     company?: string | undefined;
     source?: string | undefined;
@@ -81,7 +79,6 @@ declare const leadSchema: z.ZodObject<{
     lastName: string;
     email: string;
     website: string;
-    websiteId: string;
     phone?: string | undefined;
     company?: string | undefined;
     source?: string | undefined;

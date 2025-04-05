@@ -559,8 +559,7 @@ var leadSchema = import_zod.z.object({
   website: import_zod.z.string().min(1, { message: "Website is required" }).url({ message: "Please enter a valid URL" }),
   source: import_zod.z.string().max(100, { message: "Source must be less than 100 characters" }).optional(),
   notes: import_zod.z.string().max(500, { message: "Notes must be less than 500 characters" }).optional(),
-  customData: import_zod.z.array(customDataSchema).optional(),
-  websiteId: import_zod.z.string().min(1, { message: "Website ID is required" })
+  customData: import_zod.z.array(customDataSchema).optional()
 });
 
 // src/action/safe-action.ts

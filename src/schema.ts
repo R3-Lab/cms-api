@@ -45,9 +45,6 @@ export const leadSchema = z.object({
 
     customData: z.array(customDataSchema)
         .optional(),
-
-    websiteId: z.string()
-        .min(1, { message: 'Website ID is required' })
 });
 
 // Type inference from the schema
