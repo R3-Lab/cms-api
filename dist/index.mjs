@@ -546,7 +546,7 @@ var leadSchema = z.object({
   company: z.string().max(100, { message: "Company name must be less than 100 characters" }).optional(),
   website: z.string().min(1, { message: "Website is required" }).url({ message: "Please enter a valid URL" }),
   source: z.string().max(100, { message: "Source must be less than 100 characters" }).optional(),
-  notes: z.string().max(500, { message: "Notes must be less than 500 characters" }).optional(),
+  message: z.string().max(500, { message: "Message must be less than 500 characters" }).optional(),
   customData: z.array(customDataSchema).optional()
 });
 

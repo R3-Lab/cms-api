@@ -50,7 +50,7 @@ declare const leadSchema: z.ZodObject<{
     company: z.ZodOptional<z.ZodString>;
     website: z.ZodString;
     source: z.ZodOptional<z.ZodString>;
-    notes: z.ZodOptional<z.ZodString>;
+    message: z.ZodOptional<z.ZodString>;
     customData: z.ZodOptional<z.ZodArray<z.ZodObject<{
         key: z.ZodString;
         value: z.ZodString;
@@ -66,10 +66,10 @@ declare const leadSchema: z.ZodObject<{
     lastName: string;
     email: string;
     website: string;
+    message?: string | undefined;
     phone?: string | undefined;
     company?: string | undefined;
     source?: string | undefined;
-    notes?: string | undefined;
     customData?: {
         value: string;
         key: string;
@@ -79,10 +79,10 @@ declare const leadSchema: z.ZodObject<{
     lastName: string;
     email: string;
     website: string;
+    message?: string | undefined;
     phone?: string | undefined;
     company?: string | undefined;
     source?: string | undefined;
-    notes?: string | undefined;
     customData?: {
         value: string;
         key: string;

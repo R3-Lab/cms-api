@@ -558,7 +558,7 @@ var leadSchema = import_zod.z.object({
   company: import_zod.z.string().max(100, { message: "Company name must be less than 100 characters" }).optional(),
   website: import_zod.z.string().min(1, { message: "Website is required" }).url({ message: "Please enter a valid URL" }),
   source: import_zod.z.string().max(100, { message: "Source must be less than 100 characters" }).optional(),
-  notes: import_zod.z.string().max(500, { message: "Notes must be less than 500 characters" }).optional(),
+  message: import_zod.z.string().max(500, { message: "Message must be less than 500 characters" }).optional(),
   customData: import_zod.z.array(customDataSchema).optional()
 });
 

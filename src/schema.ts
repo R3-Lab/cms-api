@@ -39,8 +39,8 @@ export const leadSchema = z.object({
         .max(100, { message: 'Source must be less than 100 characters' })
         .optional(),
 
-    notes: z.string()
-        .max(500, { message: 'Notes must be less than 500 characters' })
+    message: z.string()
+        .max(500, { message: 'Message must be less than 500 characters' })
         .optional(),
 
     customData: z.array(customDataSchema)
