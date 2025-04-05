@@ -90,6 +90,28 @@ declare const leadSchema: z.ZodObject<{
 }>;
 type LeadSchemaType = z.infer<typeof leadSchema>;
 
+type FetcherOptions = {
+    websiteId?: string;
+    apiKey?: string;
+    baseUrl?: string;
+};
+type RequestOptions = Omit<RequestInit, 'headers'> & {
+    headers?: Record<string, string>;
+};
+declare class Fetcher {
+    private baseUrl;
+    private defaultWebsiteId?;
+    private defaultApiKey?;
+    constructor(options?: FetcherOptions);
+    private request;
+    get<T>(endpoint: string, options?: RequestOptions): Promise<CMSResponse<T>>;
+    post<T>(endpoint: string, body: any, options?: RequestOptions): Promise<CMSResponse<T>>;
+    getBlogPosts(options?: RequestOptions): Promise<CMSResponse<IBlogPost[]>>;
+    getBlogPost(slug: string, options?: RequestOptions): Promise<CMSResponse<IBlogPost>>;
+    getBlogCategories(options?: RequestOptions): Promise<CMSResponse<IBlogCategory[]>>;
+    createLead(leadData: LeadSchemaType, options?: RequestOptions): Promise<void>;
+}
+
 declare const simpleActionClient: next_safe_action.SafeActionClient<string, undefined, undefined, undefined, {}, undefined, undefined, undefined, readonly [], {
     formErrors: string[];
     fieldErrors: {};
@@ -190,4 +212,4 @@ declare function getBlogCategories(): Promise<CMSResponse<IBlogCategory[]>>;
  */
 declare function createLead(leadData: LeadSchemaType): Promise<void>;
 
-export { type CMSResponse, type IBlogCategory, type IBlogPost, type ICustomData, type ILead, type LeadSchemaType, actionClient, createLead, getBlogCategories, getBlogPost, getBlogPosts, leadSchema, rateLimitedActionClient, simpleActionClient };
+export { type CMSResponse, Fetcher, type IBlogCategory, type IBlogPost, type ICustomData, type ILead, type LeadSchemaType, actionClient, createLead, getBlogCategories, getBlogPost, getBlogPosts, leadSchema, rateLimitedActionClient, simpleActionClient };

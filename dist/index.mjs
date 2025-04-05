@@ -297,6 +297,7 @@ function createLead(leadData) {
   });
 }
 export {
+  Fetcher,
   actionClient,
   createLead,
   getBlogCategories,

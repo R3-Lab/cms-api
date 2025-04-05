@@ -3,6 +3,8 @@ import { CMSResponse, IBlogPost, IBlogCategory, ILead, ICustomData } from './typ
 import { leadSchema, LeadSchemaType } from './schema';
 import { actionClient, rateLimitedActionClient, simpleActionClient } from './action/safe-action';
 
+// Export fetcher
+export { Fetcher };
 
 // Export types
 export type { CMSResponse, IBlogPost, IBlogCategory, ILead, ICustomData };
