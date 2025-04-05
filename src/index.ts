@@ -1,6 +1,7 @@
 import dotenv from 'dotenv';
 import { Fetcher } from './fetcher';
 import { CMSResponse, IBlogPost, IBlogCategory, ILead, ICustomData } from './types';
+import { leadSchema, LeadSchemaType } from './schema';
 
 // Load environment variables from .env file only if not in Next.js or Vercel environment
 if (typeof window === 'undefined' && !process.env.VERCEL && !process.env.NEXT_PUBLIC_VERCEL_ENV) {
@@ -9,6 +10,9 @@ if (typeof window === 'undefined' && !process.env.VERCEL && !process.env.NEXT_PU
 
 // Export types
 export type { CMSResponse, IBlogPost, IBlogCategory, ILead, ICustomData };
+
+// Export schema
+export { leadSchema, type LeadSchemaType };
 
 // Create a singleton fetcher instance
 const fetcher = new Fetcher();

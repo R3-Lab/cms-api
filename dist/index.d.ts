@@ -1,3 +1,5 @@
+import { z } from 'zod';
+
 type IBlogPost = {
     slug: string;
     category?: {
@@ -38,6 +40,57 @@ type CMSResponse<T> = {
     };
 };
 
+declare const leadSchema: z.ZodObject<{
+    firstName: z.ZodString;
+    lastName: z.ZodString;
+    email: z.ZodString;
+    phone: z.ZodEffects<z.ZodOptional<z.ZodString>, string | undefined, string | undefined>;
+    company: z.ZodOptional<z.ZodString>;
+    website: z.ZodString;
+    source: z.ZodOptional<z.ZodString>;
+    notes: z.ZodOptional<z.ZodString>;
+    customData: z.ZodOptional<z.ZodArray<z.ZodObject<{
+        key: z.ZodString;
+        value: z.ZodString;
+    }, "strip", z.ZodTypeAny, {
+        key: string;
+        value: string;
+    }, {
+        key: string;
+        value: string;
+    }>, "many">>;
+    websiteId: z.ZodString;
+}, "strip", z.ZodTypeAny, {
+    websiteId: string;
+    firstName: string;
+    lastName: string;
+    email: string;
+    website: string;
+    phone?: string | undefined;
+    company?: string | undefined;
+    source?: string | undefined;
+    notes?: string | undefined;
+    customData?: {
+        key: string;
+        value: string;
+    }[] | undefined;
+}, {
+    websiteId: string;
+    firstName: string;
+    lastName: string;
+    email: string;
+    website: string;
+    phone?: string | undefined;
+    company?: string | undefined;
+    source?: string | undefined;
+    notes?: string | undefined;
+    customData?: {
+        key: string;
+        value: string;
+    }[] | undefined;
+}>;
+type LeadSchemaType = z.infer<typeof leadSchema>;
+
 /**
  * Get all blog posts
  * @returns Promise with blog posts data
@@ -61,4 +114,4 @@ declare function getBlogCategories(): Promise<CMSResponse<IBlogCategory[]>>;
  */
 declare function createLead(leadData: Omit<ILead, 'websiteId'>): Promise<void>;
 
-export { type CMSResponse, type IBlogCategory, type IBlogPost, type ICustomData, type ILead, createLead, getBlogCategories, getBlogPost, getBlogPosts };
+export { type CMSResponse, type IBlogCategory, type IBlogPost, type ICustomData, type ILead, type LeadSchemaType, createLead, getBlogCategories, getBlogPost, getBlogPosts, leadSchema };

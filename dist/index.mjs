@@ -529,8 +529,32 @@ var Fetcher = class {
   }
 };
 
+// src/schema.ts
+import { z } from "zod";
+var customDataSchema = z.object({
+  key: z.string().min(1, { message: "Key is required" }),
+  value: z.string().min(1, { message: "Value is required" })
+});
+var leadSchema = z.object({
+  firstName: z.string().min(1, { message: "First name is required" }).max(50, { message: "First name must be less than 50 characters" }),
+  lastName: z.string().min(1, { message: "Last name is required" }).max(50, { message: "Last name must be less than 50 characters" }),
+  email: z.string().min(1, { message: "Email is required" }).email({ message: "Please enter a valid email address" }),
+  phone: z.string().optional().refine(
+    (val) => !val || /^\+?[1-9]\d{1,14}$/.test(val),
+    { message: "Please enter a valid phone number" }
+  ),
+  company: z.string().max(100, { message: "Company name must be less than 100 characters" }).optional(),
+  website: z.string().min(1, { message: "Website is required" }).url({ message: "Please enter a valid URL" }),
+  source: z.string().max(100, { message: "Source must be less than 100 characters" }).optional(),
+  notes: z.string().max(500, { message: "Notes must be less than 500 characters" }).optional(),
+  customData: z.array(customDataSchema).optional(),
+  websiteId: z.string().min(1, { message: "Website ID is required" })
+});
+
 // src/index.ts
-import_dotenv.default.config();
+if (typeof window === "undefined" && !process.env.VERCEL && !process.env.NEXT_PUBLIC_VERCEL_ENV) {
+  import_dotenv.default.config();
+}
 var fetcher = new Fetcher();
 function getBlogPosts() {
   return __async(this, null, function* () {
@@ -556,5 +580,6 @@ export {
   createLead,
   getBlogCategories,
   getBlogPost,
-  getBlogPosts
+  getBlogPosts,
+  leadSchema
 };

@@ -408,7 +408,8 @@ __export(index_exports, {
   createLead: () => createLead,
   getBlogCategories: () => getBlogCategories,
   getBlogPost: () => getBlogPost,
-  getBlogPosts: () => getBlogPosts
+  getBlogPosts: () => getBlogPosts,
+  leadSchema: () => leadSchema
 });
 module.exports = __toCommonJS(index_exports);
 var import_dotenv = __toESM(require_main());
@@ -537,8 +538,32 @@ var Fetcher = class {
   }
 };
 
+// src/schema.ts
+var import_zod = require("zod");
+var customDataSchema = import_zod.z.object({
+  key: import_zod.z.string().min(1, { message: "Key is required" }),
+  value: import_zod.z.string().min(1, { message: "Value is required" })
+});
+var leadSchema = import_zod.z.object({
+  firstName: import_zod.z.string().min(1, { message: "First name is required" }).max(50, { message: "First name must be less than 50 characters" }),
+  lastName: import_zod.z.string().min(1, { message: "Last name is required" }).max(50, { message: "Last name must be less than 50 characters" }),
+  email: import_zod.z.string().min(1, { message: "Email is required" }).email({ message: "Please enter a valid email address" }),
+  phone: import_zod.z.string().optional().refine(
+    (val) => !val || /^\+?[1-9]\d{1,14}$/.test(val),
+    { message: "Please enter a valid phone number" }
+  ),
+  company: import_zod.z.string().max(100, { message: "Company name must be less than 100 characters" }).optional(),
+  website: import_zod.z.string().min(1, { message: "Website is required" }).url({ message: "Please enter a valid URL" }),
+  source: import_zod.z.string().max(100, { message: "Source must be less than 100 characters" }).optional(),
+  notes: import_zod.z.string().max(500, { message: "Notes must be less than 500 characters" }).optional(),
+  customData: import_zod.z.array(customDataSchema).optional(),
+  websiteId: import_zod.z.string().min(1, { message: "Website ID is required" })
+});
+
 // src/index.ts
-import_dotenv.default.config();
+if (typeof window === "undefined" && !process.env.VERCEL && !process.env.NEXT_PUBLIC_VERCEL_ENV) {
+  import_dotenv.default.config();
+}
 var fetcher = new Fetcher();
 function getBlogPosts() {
   return __async(this, null, function* () {
@@ -565,5 +590,6 @@ function createLead(leadData) {
   createLead,
   getBlogCategories,
   getBlogPost,
-  getBlogPosts
+  getBlogPosts,
+  leadSchema
 });
