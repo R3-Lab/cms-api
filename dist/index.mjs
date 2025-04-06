@@ -31,6 +31,9 @@ var Fetcher = class {
         headers: headers2
       });
       const data = await response.json();
+      if (response.status === 404) {
+        return null;
+      }
       if (!response.ok) {
         const errorMessage = data.message || "An error occurred";
         throw new FetcherError(
@@ -76,7 +79,8 @@ var Fetcher = class {
   }
   // Helper methods for blog posts
   async getBlogPosts(query, options) {
-    return this.get("/api/blog-posts", query, options);
+    const result = await this.get("/api/blog-posts", query, options);
+    return result || { data: [] };
   }
   // Helper method for blog post by slug
   async getBlogPost(slug, options) {
@@ -84,11 +88,13 @@ var Fetcher = class {
   }
   // Helper method for blog categories
   async getBlogCategories(options) {
-    return this.get("/api/blog-categories", {}, options);
+    const result = await this.get("/api/blog-categories", {}, options);
+    return result || { data: [] };
   }
   // Helper method for related blog posts
   async getRelatedBlogPosts(slug, query, options) {
-    return this.get(`/api/blog-posts/${slug}/related`, query, options);
+    const result = await this.get(`/api/blog-posts/${slug}/related`, query, options);
+    return result || { data: [] };
   }
   // Helper method for leads
   async createLead(leadData, options) {

@@ -36,7 +36,7 @@ export class Fetcher {
     private async request<T>(
         endpoint: string,
         options: RequestOptions = {}
-    ): Promise<CMSResponse<T>> {
+    ): Promise<CMSResponse<T> | null> {
         if (!this.defaultWebsiteId) {
             throw new FetcherError('Website ID is required');
         }
@@ -59,6 +59,11 @@ export class Fetcher {
 
             const data = await response.json();
 
+            // Handle 404 responses gracefully by returning null
+            if (response.status === 404) {
+                return null;
+            }
+
             if (!response.ok) {
                 const errorMessage = data.message || 'An error occurred';
                 throw new FetcherError(
@@ -80,7 +85,7 @@ export class Fetcher {
         }
     }
 
-    async get<T>(endpoint: string, params?: Record<string, string | number>, options?: RequestOptions): Promise<CMSResponse<T>> {
+    async get<T>(endpoint: string, params?: Record<string, string | number>, options?: RequestOptions): Promise<CMSResponse<T> | null> {
         // Add websiteId to search params for GET requests
         const url = new URL(`${this.baseUrl}${endpoint}`);
         url.searchParams.append('websiteId', this.defaultWebsiteId!);        
@@ -101,7 +106,7 @@ export class Fetcher {
         endpoint: string,
         body: any,
         options?: RequestOptions
-    ): Promise<CMSResponse<T>> {
+    ): Promise<CMSResponse<T> | null> {
         // Include websiteId in the body for POST requests
         const requestBody = {
             ...body,
@@ -117,22 +122,25 @@ export class Fetcher {
     
     // Helper methods for blog posts
     async getBlogPosts(query?: BlogPostsQuery, options?: RequestOptions): Promise<CMSResponse<IBlogPost[]>> {
-        return this.get<IBlogPost[]>('/api/blog-posts', query, options);
+        const result = await this.get<IBlogPost[]>('/api/blog-posts', query, options);
+        return result || { data: [] };
     }
     
     // Helper method for blog post by slug
-    async getBlogPost(slug: string, options?: RequestOptions): Promise<CMSResponse<IBlogPost>> {
+    async getBlogPost(slug: string, options?: RequestOptions): Promise<CMSResponse<IBlogPost> | null> {
         return this.get<IBlogPost>(`/api/blog-posts/${slug}`, {}, options);
     }
     
     // Helper method for blog categories
     async getBlogCategories(options?: RequestOptions): Promise<CMSResponse<IBlogCategory[]>> {
-        return this.get<IBlogCategory[]>('/api/blog-categories', {}, options);
+        const result = await this.get<IBlogCategory[]>('/api/blog-categories', {}, options);
+        return result || { data: [] };
     }
 
     // Helper method for related blog posts
-    async getRelatedBlogPosts(slug: string, query?: RelatedBlogPostsQuery, options?: RequestOptions): Promise<CMSResponse<IBlogPost[]>> {
-        return this.get<IBlogPost[]>(`/api/blog-posts/${slug}/related`, query, options);
+    async getRelatedBlogPosts(slug: string, query?: RelatedBlogPostsQuery, options?: RequestOptions): Promise<CMSResponse<IBlogPost[]> | null> {
+        const result = await this.get<IBlogPost[]>(`/api/blog-posts/${slug}/related`, query, options);
+        return result || { data: [] };
     }
     
     // Helper method for leads

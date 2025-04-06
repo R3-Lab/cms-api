@@ -17,12 +17,12 @@ declare class Fetcher {
     private defaultApiKey?;
     constructor(options?: FetcherOptions);
     private request;
-    get<T>(endpoint: string, params?: Record<string, string | number>, options?: RequestOptions): Promise<CMSResponse<T>>;
-    post<T>(endpoint: string, body: any, options?: RequestOptions): Promise<CMSResponse<T>>;
+    get<T>(endpoint: string, params?: Record<string, string | number>, options?: RequestOptions): Promise<CMSResponse<T> | null>;
+    post<T>(endpoint: string, body: any, options?: RequestOptions): Promise<CMSResponse<T> | null>;
     getBlogPosts(query?: BlogPostsQuery, options?: RequestOptions): Promise<CMSResponse<IBlogPost[]>>;
-    getBlogPost(slug: string, options?: RequestOptions): Promise<CMSResponse<IBlogPost>>;
+    getBlogPost(slug: string, options?: RequestOptions): Promise<CMSResponse<IBlogPost> | null>;
     getBlogCategories(options?: RequestOptions): Promise<CMSResponse<IBlogCategory[]>>;
-    getRelatedBlogPosts(slug: string, query?: RelatedBlogPostsQuery, options?: RequestOptions): Promise<CMSResponse<IBlogPost[]>>;
+    getRelatedBlogPosts(slug: string, query?: RelatedBlogPostsQuery, options?: RequestOptions): Promise<CMSResponse<IBlogPost[]> | null>;
     createLead(leadData: LeadSchemaType, options?: RequestOptions): Promise<void>;
 }
 
